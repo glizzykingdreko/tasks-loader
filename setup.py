@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tasks_loader',
-    version='0.1.0',
+    version='0.1.1',
     author='GlizzyKingDreko',
     author_email='glizzykingdreko@protonmail.com',
     description='A module for dynamically creating tasks from CSV files with extensive validation features.',

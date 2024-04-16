@@ -17,7 +17,10 @@ This module enables quick and easy loading and adaptation of any CSV file based 
     - [Example 1: Basic Task Loading](#example-1-basic-task-loading)
     - [Example 2: Advanced Validation with Regex and Lambda](#example-2-advanced-validation-with-regex-and-lambda)
     - [Example 3: Post-processing Data](#example-3-post-processing-data)
-      - [Example 4: Ticket / Sneakers Bot-like Validation](#example-4-ticket--sneakers-bot-like-validation)
+    - [Example 4: Ticket / Sneakers Bot-like Validation](#example-4-ticket--sneakers-bot-like-validation)
+    - [Example 2: Advanced Validation with Regex and Lambda](#example-2-advanced-validation-with-regex-and-lambda-1)
+    - [Example 5: Using Pre-Made Regex Checks with the Patterns Class](#example-5-using-pre-made-regex-checks-with-the-patterns-class)
+    - [Example 6: File Check and Creation Handling](#example-6-file-check-and-creation-handling)
   - [Stay in touch with me](#stay-in-touch-with-me)
 
 ## Installation
@@ -162,7 +165,7 @@ for task in tasks:
     print(task)
 ```
 
-#### Example 4: Ticket / Sneakers Bot-like Validation
+### Example 4: Ticket / Sneakers Bot-like Validation
 
 This example demonstrates a setup tailored for automated tasks commonly used in ticket purchasing or sneaker bot scenarios. The configuration ensures all necessary information for a purchase is validated against specific criteria before proceeding with a task.
 
@@ -241,6 +244,124 @@ for task in tasks:
 - **Credit Card CVV**: A 3-digit security code validated with a regex pattern.
 
 This setup is an example of an automated module that initiates tasks based on the validated entries from a CSV file, ensuring each task has all the necessary and correctly formatted information before proceeding. This kind of validation is crucial in scenarios where precise and validated data is essential for the success of automated tasks, such as in ticket purchasing or sneaker bot operations.
+
+
+### Example 2: Advanced Validation with Regex and Lambda
+
+**CSV (`advanced_validation.csv`):**
+
+```csv
+Name,Email,Role
+John Doe,johndoe@example.com,admin
+Jane Smith,janesmith@bademail,visitor
+```
+
+**Task Format:**
+
+```python
+task_format = {
+    "name": {"type": str, "required": True},
+    "email": {
+        "type": str,
+        "required": True,
+        "validation": r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    },
+    "role": {
+        "type": str,
+        "required": True,
+        "choices": ["admin", "user", "guest"],
+        "validation": lambda x: x in ["admin", "user", "guest"]
+    },
+}
+```
+
+**Python Code:**
+
+```python
+from tasks_loader import Tasks
+
+tasks = Tasks(input_file='advanced_validation.csv', task_format=task_format)
+
+for task in tasks:
+    print(task)
+```
+
+### Example 5: Using Pre-Made Regex Checks with the Patterns Class
+
+**CSV (`regex_validation.csv`):**
+
+```csv
+Name,Email,Phone,Month
+John Doe,johndoe@example.com,+12345678901,January
+Jane Smith,janesmith@bademail,+12345,Smarch
+```
+
+**Task Format:**
+
+```python
+task_format = {
+    "name": {"type": str, "required": True},
+    "email": {
+        "type": str,
+        "required": True,
+        "validation": Patterns.MAIL
+    },
+    "phone": {
+        "type": str,
+        "required": True,
+        "validation": Patterns.PHONE
+    },
+    "month": {
+        "type": str,
+        "required": True,
+        "validation": Patterns.MONTH
+    }
+}
+```
+
+**Python Code:**
+
+```python
+from tasks_loader import Patterns
+
+task_format = {
+    "name": {"type": str, "required": True},
+    "email": {
+        "type": str,
+        "required": True,
+        "validation": Patterns.MAIL
+    },
+    "phone": {
+        "type": str,
+        "required": True,
+        "validation": Patterns.PHONE
+    },
+    "month": {
+        "type": str,
+        "required": True,
+        "validation": Patterns.MONTH
+    }
+}
+```
+
+### Example 6: File Check and Creation Handling
+
+If the specified CSV file does not exist, ty can createa new one by calling the function `create_file` with the appropriate headers based on the `task_format` to ensure data consistency.
+
+**Python Code:**
+
+```python
+from tasks_loader import Tasks
+
+# Define the CSV file and format
+tasks = Tasks(input_file='new_tasks.csv', task_format=task_format)
+
+if tasks.create_file():
+    print("File created, please fill it and then restart the script")
+    exit(0)
+print("File aready created")
+```
+
 
 ## Stay in touch with me
 

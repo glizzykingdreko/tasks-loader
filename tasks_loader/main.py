@@ -1,35 +1,7 @@
 import csv, re
+from os import path
 
-class Task:
-    """
-    Represents a single task, dynamically creating attributes based on input keyword arguments.
-    
-    Attributes:
-        id (str): A unique identifier for the task, formatted as a zero-padded string.
-    
-    Parameters:
-        **kwargs: Arbitrary keyword arguments representing task attributes and their values.
-    """
-    _id_counter = 1  # Class variable to keep track of the next id
-
-    def __init__(self, **kwargs):
-        self.id = str(Task._id_counter).zfill(3)  # Format the id as '001', '002',...
-        Task._id_counter += 1  # Increment for the next task
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    def __str__(self):
-        """Return the task id as a string representation of the Task object."""
-        return self.id
-
-    def to_dict(self):
-        """
-        Convert the Task instance into a dictionary.
-        
-        Returns:
-            dict: A dictionary representation of the Task instance, including its id and all dynamically added attributes.
-        """
-        return {**self.__dict__}
+from .models import Task
 
 class Tasks:
     """
@@ -85,6 +57,24 @@ class Tasks:
             str: A message stating the number of loaded tasks.
         """
         return f"Loaded {len(self.tasks)} valid tasks."
+
+    def create_file(self) -> bool:
+        """
+        Create a default CSV file with headers based on the task format.
+
+        Returns:
+            bool: True if the file was successfully created, False otherwise.
+        """
+        headers = self.task_format.keys()
+        
+        # Check if file exists
+        if path.exists(self.input_file):
+            return False
+
+        with open(self.input_file, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=headers)
+            writer.writeheader()
+        return True
 
     def to_dict(self):
         """

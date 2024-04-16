@@ -1,1 +1,2 @@
-from .main import Tasks, Task
+from .main import Tasks
+from .models import Task, Patterns
